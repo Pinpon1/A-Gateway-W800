@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Session Name="F:\Project\A-Geteway-W800\Software\A-Geteway\tools\w800\projects\SDK_Project\project\CDK_WS\CDK_WS.cdkws">
+  <int Value="0" Name="m_selectedTab"/>
+  <wxString Value="F:\Project\A-Geteway-W800\Software\A-Geteway\tools\w800\projects\SDK_Project\project\CDK_WS\CDK_WS.cdkws" Name="m_workspaceName"/>
+  <TabInfoArray Name="TabInfoArray">
+    <TabInfo>
+      <wxString Value="F:\Project\A-Geteway-W800\Software\A-Geteway\app\main.c" Name="FileName"/>
+      <wxString Value="W800_SDK" Name="ProjectName"/>
+      <int Value="0" Name="FirstVisibleLine"/>
+      <int Value="14" Name="CurrentLine"/>
+      <wxArrayString Name="Bookmarks"/>
+      <IntVector Name="CollapsedFolds"/>
+    </TabInfo>
+    <TabInfo>
+      <wxString Value="F:\Project\A-Geteway-W800\Software\A-Geteway\demo\wm_demo.h" Name="FileName"/>
+      <wxString Value="W800_SDK" Name="ProjectName"/>
+      <int Value="130" Name="FirstVisibleLine"/>
+      <int Value="157" Name="CurrentLine"/>
+      <wxArrayString Name="Bookmarks"/>
+      <IntVector Name="CollapsedFolds"/>
+    </TabInfo>
+  </TabInfoArray>
+  <SerializedObject Name="m_breakpoints">
+    <long Value="0" Name="Count"/>
+  </SerializedObject>
+</Session>
