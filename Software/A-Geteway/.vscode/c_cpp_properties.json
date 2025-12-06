@@ -1,0 +1,15 @@
+{
+    "configurations": [
+        {
+            "includePath": [
+                "${workspaceFolder}/**",
+                "f:/Project/W800/wm_iot_sdk_v2.4-rc/wm_iot_sdk/components/**"
+            ],
+            "intelliSenseMode": "windows-msvc-x64",
+            "compilerPath": "C:\\unkx\\mingw64\\bin\\gcc.exe",
+            "cStandard": "c17",
+            "cppStandard": "gnu++17"
+        }
+    ],
+    "version": 4
+}

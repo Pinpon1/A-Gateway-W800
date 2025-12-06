@@ -1,0 +1,256 @@
+/**
+ * @file wm_dt_hw.c
+ *
+ * @brief Device Hardware Information Module
+ *
+ */
+
+/**
+ *  Copyright 2022-2024 Beijing WinnerMicroelectronics Co.,Ltd.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+#include "wm_dt_hw.h"
+#include "wm_dt_op.h"
+
+#include "wm_soc_cfgs.h"
+#include "wm_irq.h"
+
+
+struct wm_drv_ops_structure;
+
+typedef struct wm_drv_ops_structure wm_drv_rcc_ops_t;
+extern const wm_drv_rcc_ops_t wm_drv_rcc_ops;
+
+typedef struct wm_drv_ops_structure wm_drv_dma_ops_t;
+extern const wm_drv_dma_ops_t wm_drv_dma_ops;
+
+typedef struct wm_drv_ops_structure wm_drv_gpio_ops_t;
+extern const wm_drv_gpio_ops_t wm_drv_gpio_ops;
+
+typedef struct wm_drv_ops_structure wm_drv_uart_ops_t;
+extern const wm_drv_uart_ops_t wm_drv_uart_ops;
+
+typedef struct wm_drv_ops_structure wm_drv_pwm_ops_t;
+extern const wm_drv_pwm_ops_t wm_drv_pwm_ops;
+
+typedef struct wm_drv_ops_structure wm_drv_iflash_ops_t;
+extern const wm_drv_iflash_ops_t wm_drv_internal_flash_ops;
+
+typedef struct wm_drv_ops_structure wm_drv_rtc_ops_t;
+extern const wm_drv_rtc_ops_t wm_drv_rtc_ops;
+
+typedef struct wm_drv_ops_structure wm_drv_pmu_ops_t;
+extern const wm_drv_pmu_ops_t wm_drv_pmu_ops;
+
+typedef struct wm_drv_ops_structure wm_drv_wdt_ops_t;
+extern const wm_drv_wdt_ops_t wm_drv_wdt_ops;
+
+typedef struct wm_drv_ops_structure wm_drv_crc_ops_t;
+extern const wm_drv_crc_ops_t wm_drv_crc_ops;
+
+typedef struct wm_drv_ops_structure wm_drv_hash_ops_t;
+extern const wm_drv_hash_ops_t wm_drv_hash_ops;
+
+typedef struct wm_drv_ops_structure wm_drv_rng_ops_t;
+extern const wm_drv_rng_ops_t wm_drv_rng_ops;
+
+const static wm_dt_hw_rcc_cfg_t dt_hw_rcc_rcc[] = {
+    { .type = WM_RCC_TYPE_CPU, .clock = 80 },
+    { .type = WM_RCC_TYPE_WLAN, .clock = 160 },
+};
+
+const static wm_dt_hw_rcc_t dt_hw_rcc = {
+    .init_cfg = { .init_level = 0, .init_priority = 0 },
+    .reg_base = 0x40000e00,
+    .rcc_cfg_count = sizeof(dt_hw_rcc_rcc) / sizeof(dt_hw_rcc_rcc[0]),
+    .rcc_cfg = (wm_dt_hw_rcc_cfg_t *)dt_hw_rcc_rcc,
+};
+
+const static wm_dt_hw_dma_t dt_hw_dma = {
+    .init_cfg = { .init_level = 0, .init_priority = 0 },
+    .reg_base = 0x40000800,
+    .irq_cfg = { .irq_num = WM_IRQ_DMA_Channel0, .irq_priority = 0 },
+};
+
+const static wm_dt_hw_gpio_cfg_t dt_hw_gpio_pin_cfg[] = {
+};
+
+const static wm_dt_hw_gpio_t dt_hw_gpio = {
+    .init_cfg = { .init_level = 0, .init_priority = 0 },
+    .gpio_cfg_count = sizeof(dt_hw_gpio_pin_cfg) / sizeof(dt_hw_gpio_pin_cfg[0]),
+    .gpio_cfg = (wm_dt_hw_gpio_cfg_t *)dt_hw_gpio_pin_cfg,
+};
+
+const static wm_dt_hw_pin_cfg_t dt_hw_uart0_pin[] = {
+    { .pin_num = WM_GPIO_NUM_35, .pin_mux = WM_GPIO_IOMUX_FUN1 },
+    { .pin_num = WM_GPIO_NUM_36, .pin_mux = WM_GPIO_IOMUX_FUN1 },
+};
+
+const static wm_dt_hw_uart_t dt_hw_uart0 = {
+    .init_cfg = { .init_level = 0, .init_priority = 0 },
+    .reg_base = 0x40010600,
+    .irq_cfg = { .irq_num = WM_IRQ_UART0, .irq_priority = 0 },
+    .uart_cfg = { .baudrate = WM_UART_BAUDRATE_B115200, .parity = WM_UART_PARITY_NONE, .stop_bits = WM_UART_STOP_BIT_1, .data_bits = WM_UART_DATA_BIT_8, .flow_ctrl = WM_UART_FLOW_CTRL_DISABLE },
+    .pin_cfg_count = sizeof(dt_hw_uart0_pin) / sizeof(dt_hw_uart0_pin[0]),
+    .pin_cfg = (wm_dt_hw_pin_cfg_t *)dt_hw_uart0_pin,
+    .rcc_device_name = "rcc",
+};
+
+const static wm_dt_hw_pin_cfg_t dt_hw_uart1_pin[] = {
+    { .pin_num = WM_GPIO_NUM_22, .pin_mux = WM_GPIO_IOMUX_FUN1 },
+    { .pin_num = WM_GPIO_NUM_23, .pin_mux = WM_GPIO_IOMUX_FUN1 },
+};
+
+const static wm_dt_hw_uart_t dt_hw_uart1 = {
+    .init_cfg = { .init_level = 0, .init_priority = 0 },
+    .reg_base = 0x40010800,
+    .irq_cfg = { .irq_num = WM_IRQ_UART1, .irq_priority = 0 },
+    .uart_cfg = { .baudrate = WM_UART_BAUDRATE_B115200, .parity = WM_UART_PARITY_NONE, .stop_bits = WM_UART_STOP_BIT_1, .data_bits = WM_UART_DATA_BIT_8, .flow_ctrl = WM_UART_FLOW_CTRL_DISABLE },
+    .pin_cfg_count = sizeof(dt_hw_uart1_pin) / sizeof(dt_hw_uart1_pin[0]),
+    .pin_cfg = (wm_dt_hw_pin_cfg_t *)dt_hw_uart1_pin,
+    .rcc_device_name = "rcc",
+};
+
+const static wm_dt_hw_pin_cfg_t dt_hw_uart2_pin[] = {
+    { .pin_num = WM_GPIO_NUM_18, .pin_mux = WM_GPIO_IOMUX_FUN3 },
+    { .pin_num = WM_GPIO_NUM_19, .pin_mux = WM_GPIO_IOMUX_FUN3 },
+    { .pin_num = WM_GPIO_NUM_20, .pin_mux = WM_GPIO_IOMUX_FUN2 },
+    { .pin_num = WM_GPIO_NUM_21, .pin_mux = WM_GPIO_IOMUX_FUN2 },
+};
+
+const static wm_dt_hw_uart_t dt_hw_uart2 = {
+    .init_cfg = { .init_level = 0, .init_priority = 0 },
+    .reg_base = 0x40010a00,
+    .irq_cfg = { .irq_num = WM_IRQ_UART24, .irq_priority = 0 },
+    .uart_cfg = { .baudrate = WM_UART_BAUDRATE_B115200, .parity = WM_UART_PARITY_NONE, .stop_bits = WM_UART_STOP_BIT_1, .data_bits = WM_UART_DATA_BIT_8, .flow_ctrl = WM_UART_FLOW_CTRL_RTS_CTS },
+    .pin_cfg_count = sizeof(dt_hw_uart2_pin) / sizeof(dt_hw_uart2_pin[0]),
+    .pin_cfg = (wm_dt_hw_pin_cfg_t *)dt_hw_uart2_pin,
+    .rcc_device_name = "rcc",
+};
+
+const static wm_dt_hw_pin_cfg_t dt_hw_uart3_pin[] = {
+    { .pin_num = WM_GPIO_NUM_16, .pin_mux = WM_GPIO_IOMUX_FUN3 },
+    { .pin_num = WM_GPIO_NUM_17, .pin_mux = WM_GPIO_IOMUX_FUN3 },
+};
+
+const static wm_dt_hw_uart_t dt_hw_uart3 = {
+    .init_cfg = { .init_level = 0, .init_priority = 0 },
+    .reg_base = 0x40010c00,
+    .irq_cfg = { .irq_num = WM_IRQ_UART24, .irq_priority = 0 },
+    .uart_cfg = { .baudrate = WM_UART_BAUDRATE_B115200, .parity = WM_UART_PARITY_NONE, .stop_bits = WM_UART_STOP_BIT_1, .data_bits = WM_UART_DATA_BIT_8, .flow_ctrl = WM_UART_FLOW_CTRL_DISABLE },
+    .pin_cfg_count = sizeof(dt_hw_uart3_pin) / sizeof(dt_hw_uart3_pin[0]),
+    .pin_cfg = (wm_dt_hw_pin_cfg_t *)dt_hw_uart3_pin,
+    .dma_device_name = "dma",
+    .rcc_device_name = "rcc",
+};
+
+const static wm_dt_hw_pin_cfg_t dt_hw_uart4_pin[] = {
+    { .pin_num = WM_GPIO_NUM_20, .pin_mux = WM_GPIO_IOMUX_FUN3 },
+    { .pin_num = WM_GPIO_NUM_21, .pin_mux = WM_GPIO_IOMUX_FUN3 },
+};
+
+const static wm_dt_hw_uart_t dt_hw_uart4 = {
+    .init_cfg = { .init_level = 0, .init_priority = 0 },
+    .reg_base = 0x40010e00,
+    .irq_cfg = { .irq_num = WM_IRQ_UART24, .irq_priority = 0 },
+    .uart_cfg = { .baudrate = WM_UART_BAUDRATE_B115200, .parity = WM_UART_PARITY_NONE, .stop_bits = WM_UART_STOP_BIT_1, .data_bits = WM_UART_DATA_BIT_8, .flow_ctrl = WM_UART_FLOW_CTRL_DISABLE },
+    .pin_cfg_count = sizeof(dt_hw_uart4_pin) / sizeof(dt_hw_uart4_pin[0]),
+    .pin_cfg = (wm_dt_hw_pin_cfg_t *)dt_hw_uart4_pin,
+    .dma_device_name = "dma",
+    .rcc_device_name = "rcc",
+};
+
+const static wm_dt_hw_pin_cfg_t dt_hw_pwm_pin[] = {
+    { .pin_num = WM_GPIO_NUM_16, .pin_mux = WM_GPIO_IOMUX_FUN1 },
+    { .pin_num = WM_GPIO_NUM_17, .pin_mux = WM_GPIO_IOMUX_FUN1 },
+    { .pin_num = WM_GPIO_NUM_18, .pin_mux = WM_GPIO_IOMUX_FUN1 },
+    { .pin_num = WM_GPIO_NUM_19, .pin_mux = WM_GPIO_IOMUX_FUN1 },
+    { .pin_num = WM_GPIO_NUM_4, .pin_mux = WM_GPIO_IOMUX_FUN3 },
+    { .pin_num = WM_GPIO_NUM_24, .pin_mux = WM_GPIO_IOMUX_FUN3 },
+};
+
+const static wm_dt_hw_pwm_t dt_hw_pwm = {
+    .init_cfg = { .init_level = 0, .init_priority = 0 },
+    .reg_base = 0x40011e00,
+    .irq_cfg = { .irq_num = WM_IRQ_PWM, .irq_priority = 0 },
+    .pin_cfg_count = sizeof(dt_hw_pwm_pin) / sizeof(dt_hw_pwm_pin[0]),
+    .pin_cfg = (wm_dt_hw_pin_cfg_t *)dt_hw_pwm_pin,
+    .dma_device_name = "dma",
+};
+
+const static wm_dt_hw_iflash_t dt_hw_iflash = {
+    .init_cfg = { .init_level = 0, .init_priority = 0 },
+    .reg_base = 0x40002000,
+    .flash_cfg = { .quad_spi = true },
+};
+
+const static wm_dt_hw_rtc_t dt_hw_rtc = {
+    .init_cfg = { .init_level = 0, .init_priority = 0 },
+    .reg_base = 0x40000d0c,
+    .irq_cfg = { .irq_num = WM_IRQ_PMU, .irq_priority = 0 },
+};
+
+const static wm_dt_hw_pmu_t dt_hw_pmu = {
+    .init_cfg = { .init_level = 0, .init_priority = 0 },
+    .reg_base = 0x40000d00,
+    .irq_cfg = { .irq_num = WM_IRQ_PMU, .irq_priority = 0 },
+    .clk_src = WM_PMU_CLOCK_SRC_32K,
+};
+
+const static wm_dt_hw_wdt_t dt_hw_wdt = {
+    .init_cfg = { .init_level = 0, .init_priority = 0 },
+    .reg_base = 0x40011600,
+    .irq_cfg = { .irq_num = WM_IRQ_WDG, .irq_priority = 0 },
+    .wdt_cfg = { .counter_value = 10000000 },
+};
+
+const static wm_dt_hw_crc_t dt_hw_crc = {
+    .init_cfg = { .init_level = 0, .init_priority = 0 },
+    .reg_base = 0x40000600,
+    .rcc_device_name = "rcc",
+};
+
+const static wm_dt_hw_hash_t dt_hw_hash = {
+    .init_cfg = { .init_level = 0, .init_priority = 0 },
+    .reg_base = 0x40000600,
+    .rcc_device_name = "rcc",
+};
+
+const static wm_dt_hw_rng_t dt_hw_rng = {
+    .init_cfg = { .init_level = 0, .init_priority = 0 },
+    .reg_base = 0x40000600,
+    .rcc_device_name = "rcc",
+};
+
+const static struct wm_dt_table_entry dt_hw_table_entry[] = {
+    { .dev_name = "rcc", .hw_addr = (void *)&dt_hw_rcc, .ops_addr = (void *)&wm_drv_rcc_ops },
+    { .dev_name = "dma", .hw_addr = (void *)&dt_hw_dma, .ops_addr = (void *)&wm_drv_dma_ops },
+    { .dev_name = "gpio", .hw_addr = (void *)&dt_hw_gpio, .ops_addr = (void *)&wm_drv_gpio_ops },
+    { .dev_name = "uart0", .hw_addr = (void *)&dt_hw_uart0, .ops_addr = (void *)&wm_drv_uart_ops },
+    { .dev_name = "uart1", .hw_addr = (void *)&dt_hw_uart1, .ops_addr = (void *)&wm_drv_uart_ops },
+    { .dev_name = "uart2", .hw_addr = (void *)&dt_hw_uart2, .ops_addr = (void *)&wm_drv_uart_ops },
+    { .dev_name = "uart3", .hw_addr = (void *)&dt_hw_uart3, .ops_addr = (void *)&wm_drv_uart_ops },
+    { .dev_name = "uart4", .hw_addr = (void *)&dt_hw_uart4, .ops_addr = (void *)&wm_drv_uart_ops },
+    { .dev_name = "pwm", .hw_addr = (void *)&dt_hw_pwm, .ops_addr = (void *)&wm_drv_pwm_ops },
+    { .dev_name = "iflash", .hw_addr = (void *)&dt_hw_iflash, .ops_addr = (void *)&wm_drv_internal_flash_ops },
+    { .dev_name = "rtc", .hw_addr = (void *)&dt_hw_rtc, .ops_addr = (void *)&wm_drv_rtc_ops },
+    { .dev_name = "pmu", .hw_addr = (void *)&dt_hw_pmu, .ops_addr = (void *)&wm_drv_pmu_ops },
+    { .dev_name = "wdt", .hw_addr = (void *)&dt_hw_wdt, .ops_addr = (void *)&wm_drv_wdt_ops },
+    { .dev_name = "crc", .hw_addr = (void *)&dt_hw_crc, .ops_addr = (void *)&wm_drv_crc_ops },
+    { .dev_name = "hash", .hw_addr = (void *)&dt_hw_hash, .ops_addr = (void *)&wm_drv_hash_ops },
+    { .dev_name = "rng", .hw_addr = (void *)&dt_hw_rng, .ops_addr = (void *)&wm_drv_rng_ops },
+};
+
+WM_DT_TABLE_DEFINE(, (sizeof(dt_hw_table_entry) / sizeof(dt_hw_table_entry[0])), (void *)&dt_hw_table_entry[0]);
