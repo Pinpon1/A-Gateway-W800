@@ -48,11 +48,20 @@ extern const wm_drv_pwm_ops_t wm_drv_pwm_ops;
 typedef struct wm_drv_ops_structure wm_drv_iflash_ops_t;
 extern const wm_drv_iflash_ops_t wm_drv_internal_flash_ops;
 
+typedef struct wm_drv_ops_structure wm_drv_i2c_ops_t;
+extern const wm_drv_i2c_ops_t wm_drv_i2c_ops;
+
+typedef struct wm_drv_ops_structure wm_drv_eeprom_ops_t;
+extern const wm_drv_eeprom_ops_t wm_drv_eeprom_nv24c0x_ops;
+
 typedef struct wm_drv_ops_structure wm_drv_rtc_ops_t;
 extern const wm_drv_rtc_ops_t wm_drv_rtc_ops;
 
 typedef struct wm_drv_ops_structure wm_drv_pmu_ops_t;
 extern const wm_drv_pmu_ops_t wm_drv_pmu_ops;
+
+typedef struct wm_drv_ops_structure wm_drv_i2s_ops_t;
+extern const wm_drv_i2s_ops_t wm_drv_i2s_ops;
 
 typedef struct wm_drv_ops_structure wm_drv_wdt_ops_t;
 extern const wm_drv_wdt_ops_t wm_drv_wdt_ops;
@@ -196,6 +205,51 @@ const static wm_dt_hw_iflash_t dt_hw_iflash = {
     .flash_cfg = { .quad_spi = true },
 };
 
+const static wm_dt_hw_pin_cfg_t dt_hw_i2c_pin[] = {
+    { .pin_num = WM_GPIO_NUM_1, .pin_mux = WM_GPIO_IOMUX_FUN2 },
+    { .pin_num = WM_GPIO_NUM_4, .pin_mux = WM_GPIO_IOMUX_FUN2 },
+};
+
+const static wm_dt_hw_i2c_t dt_hw_i2c = {
+    .init_cfg = { .init_level = 0, .init_priority = 0 },
+    .reg_base = 0x40010000,
+    .irq_cfg = { .irq_num = WM_IRQ_I2C, .irq_priority = 0 },
+    .i2c_cfg = { .max_clock = 400000, .addr_10_bits = false },
+    .pin_cfg_count = sizeof(dt_hw_i2c_pin) / sizeof(dt_hw_i2c_pin[0]),
+    .pin_cfg = (wm_dt_hw_pin_cfg_t *)dt_hw_i2c_pin,
+    .rcc_device_name = "rcc",
+};
+
+const static wm_dt_hw_eeprom_t dt_hw_eeprom0 = {
+    .init_cfg = { .init_level = 0, .init_priority = 0 },
+    .speed_hz = 400000,
+    .i2c_addr = 0x52,
+    .size = 256,
+    .page_size = 16,
+    .addr_width = 8,
+    .read_only = false,
+    .max_write_time_ms = 5,
+    .i2c_device_name = "i2c",
+};
+
+const static wm_dt_hw_pin_cfg_t dt_hw_eeprom1_pin[] = {
+    { .pin_num = WM_GPIO_NUM_21, .pin_mux = WM_GPIO_IOMUX_FUN5, .pin_dir = WM_GPIO_DIR_OUTPUT, .pin_pupd = WM_GPIO_FLOAT },
+};
+
+const static wm_dt_hw_eeprom_t dt_hw_eeprom1 = {
+    .init_cfg = { .init_level = 0, .init_priority = 0 },
+    .speed_hz = 100000,
+    .i2c_addr = 0x50,
+    .size = 256,
+    .page_size = 16,
+    .addr_width = 8,
+    .read_only = false,
+    .max_write_time_ms = 10,
+    .i2c_device_name = "i2c",
+    .pin_cfg_count = sizeof(dt_hw_eeprom1_pin) / sizeof(dt_hw_eeprom1_pin[0]),
+    .pin_cfg = (wm_dt_hw_pin_cfg_t *)dt_hw_eeprom1_pin,
+};
+
 const static wm_dt_hw_rtc_t dt_hw_rtc = {
     .init_cfg = { .init_level = 0, .init_priority = 0 },
     .reg_base = 0x40000d0c,
@@ -207,6 +261,25 @@ const static wm_dt_hw_pmu_t dt_hw_pmu = {
     .reg_base = 0x40000d00,
     .irq_cfg = { .irq_num = WM_IRQ_PMU, .irq_priority = 0 },
     .clk_src = WM_PMU_CLOCK_SRC_32K,
+};
+
+const static wm_dt_hw_pin_cfg_t dt_hw_i2s_pin[] = {
+    { .pin_num = WM_GPIO_NUM_24, .pin_mux = WM_GPIO_IOMUX_FUN1 },
+    { .pin_num = WM_GPIO_NUM_25, .pin_mux = WM_GPIO_IOMUX_FUN1 },
+    { .pin_num = WM_GPIO_NUM_7, .pin_mux = WM_GPIO_IOMUX_FUN3 },
+    { .pin_num = WM_GPIO_NUM_26, .pin_mux = WM_GPIO_IOMUX_FUN1 },
+    { .pin_num = WM_GPIO_NUM_27, .pin_mux = WM_GPIO_IOMUX_FUN1 },
+};
+
+const static wm_dt_hw_i2s_t dt_hw_i2s = {
+    .init_cfg = { .init_level = 0, .init_priority = 0 },
+    .reg_base = 0x40012000,
+    .irq_cfg = { .irq_num = WM_IRQ_I2S, .irq_priority = 0 },
+    .i2s_cfg = { .extal_clock_en = false, .mclk_hz = 80000000 },
+    .pin_cfg_count = sizeof(dt_hw_i2s_pin) / sizeof(dt_hw_i2s_pin[0]),
+    .pin_cfg = (wm_dt_hw_pin_cfg_t *)dt_hw_i2s_pin,
+    .dma_device_name = "dma",
+    .rcc_device_name = "rcc",
 };
 
 const static wm_dt_hw_wdt_t dt_hw_wdt = {
@@ -245,8 +318,12 @@ const static struct wm_dt_table_entry dt_hw_table_entry[] = {
     { .dev_name = "uart4", .hw_addr = (void *)&dt_hw_uart4, .ops_addr = (void *)&wm_drv_uart_ops },
     { .dev_name = "pwm", .hw_addr = (void *)&dt_hw_pwm, .ops_addr = (void *)&wm_drv_pwm_ops },
     { .dev_name = "iflash", .hw_addr = (void *)&dt_hw_iflash, .ops_addr = (void *)&wm_drv_internal_flash_ops },
+    { .dev_name = "i2c", .hw_addr = (void *)&dt_hw_i2c, .ops_addr = (void *)&wm_drv_i2c_ops },
+    { .dev_name = "eeprom0", .hw_addr = (void *)&dt_hw_eeprom0, .ops_addr = (void *)&wm_drv_eeprom_nv24c0x_ops },
+    { .dev_name = "eeprom1", .hw_addr = (void *)&dt_hw_eeprom1, .ops_addr = (void *)&wm_drv_eeprom_nv24c0x_ops },
     { .dev_name = "rtc", .hw_addr = (void *)&dt_hw_rtc, .ops_addr = (void *)&wm_drv_rtc_ops },
     { .dev_name = "pmu", .hw_addr = (void *)&dt_hw_pmu, .ops_addr = (void *)&wm_drv_pmu_ops },
+    { .dev_name = "i2s", .hw_addr = (void *)&dt_hw_i2s, .ops_addr = (void *)&wm_drv_i2s_ops },
     { .dev_name = "wdt", .hw_addr = (void *)&dt_hw_wdt, .ops_addr = (void *)&wm_drv_wdt_ops },
     { .dev_name = "crc", .hw_addr = (void *)&dt_hw_crc, .ops_addr = (void *)&wm_drv_crc_ops },
     { .dev_name = "hash", .hw_addr = (void *)&dt_hw_hash, .ops_addr = (void *)&wm_drv_hash_ops },

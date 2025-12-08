@@ -133,6 +133,44 @@ typedef struct {
 } wm_dt_hw_iflash_t;
 
 typedef struct {
+    uint32_t max_clock;
+    bool addr_10_bits;
+} wm_dt_hw_i2c_cfg_t;
+
+
+typedef struct {
+    wm_dt_hw_init_cfg_t init_cfg;
+
+    uint32_t reg_base;
+    wm_dt_hw_irq_cfg_t irq_cfg;
+
+    wm_dt_hw_i2c_cfg_t i2c_cfg;
+
+    uint8_t pin_cfg_count;
+    wm_dt_hw_pin_cfg_t *pin_cfg;
+
+    char *dma_device_name;
+    char *rcc_device_name;
+} wm_dt_hw_i2c_t;
+
+typedef struct {
+    wm_dt_hw_init_cfg_t init_cfg;
+
+    uint8_t pin_cfg_count;
+    wm_dt_hw_pin_cfg_t *pin_cfg;
+
+    uint32_t speed_hz;
+    uint32_t size;
+    uint16_t i2c_addr;
+    uint16_t page_size;
+    uint8_t addr_width;
+    uint8_t read_only;
+    uint16_t max_write_time_ms;
+
+    char *i2c_device_name;
+} wm_dt_hw_eeprom_t;
+
+typedef struct {
     wm_dt_hw_init_cfg_t init_cfg;
 
     uint32_t reg_base;
@@ -147,6 +185,26 @@ typedef struct {
 
     wm_pmu_clock_source_t clk_src;
 } wm_dt_hw_pmu_t;
+
+typedef struct {
+    bool extal_clock_en;     /**< @ref wm_drv_i2s_ioctl_args_t */
+    uint32_t mclk_hz;        /**< @ref wm_drv_i2s_ioctl_args_t */
+} wm_dt_hw_i2s_cfg_t;
+
+typedef struct {
+    wm_dt_hw_init_cfg_t init_cfg;
+
+    uint32_t reg_base;
+    wm_dt_hw_irq_cfg_t irq_cfg;
+
+    uint8_t pin_cfg_count;
+    wm_dt_hw_pin_cfg_t *pin_cfg;
+
+    wm_dt_hw_i2s_cfg_t i2s_cfg;
+
+    char *dma_device_name;
+    char *rcc_device_name;
+} wm_dt_hw_i2s_t;
 
 typedef struct {
     uint32_t counter_value;
